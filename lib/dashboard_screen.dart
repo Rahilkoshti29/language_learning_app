@@ -22,17 +22,20 @@ class DashboardScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () async => provider.selectedLanguage != null
-              ? provider.selectLanguage(provider.selectedLanguage!)
-              : null,
+          onRefresh: () async {
+            if (provider.selectedLanguage != null) {
+              await provider.selectLanguage(provider.selectedLanguage!);
+            }
+          },
           child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
 
-                // Header
+                // ─── Header ───────────────────────────────────────
                 FadeInDown(
                   child: Row(
                     children: [
@@ -40,10 +43,7 @@ class DashboardScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Good ${_greeting()},',
-                              style: const TextStyle(fontSize: 14, color: AppColors.grey),
-                            ),
+                            Text('Good ${_greeting()},', style: const TextStyle(fontSize: 14, color: AppColors.grey)),
                             Text(
                               auth.userDisplayName.split(' ').first,
                               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.dark),
@@ -70,7 +70,7 @@ class DashboardScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // Language banner
+                // ─── Language Banner ──────────────────────────────
                 if (lang != null)
                   FadeInDown(
                     delay: const Duration(milliseconds: 100),
@@ -79,7 +79,7 @@ class DashboardScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // Daily Lesson
+                // ─── Daily Lesson ─────────────────────────────────
                 FadeInUp(
                   delay: const Duration(milliseconds: 150),
                   child: _DailyLessonCard(provider: provider),
@@ -87,44 +87,23 @@ class DashboardScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // Stats Row
+                // ─── Stats Row ────────────────────────────────────
                 FadeInUp(
                   delay: const Duration(milliseconds: 200),
                   child: Row(
                     children: [
-                      Expanded(
-                        child: StatCard(
-                          value: '${provider.learnedWords.length}',
-                          label: 'Words Learned',
-                          icon: Icons.check_circle_rounded,
-                          color: AppColors.success,
-                        ),
-                      ),
+                      Expanded(child: StatCard(value: '${provider.learnedWords.length}', label: 'Words Learned', icon: Icons.check_circle_rounded, color: AppColors.success)),
                       const SizedBox(width: 12),
-                      Expanded(
-                        child: StatCard(
-                          value: '${progress?.currentStreak ?? 0}🔥',
-                          label: 'Day Streak',
-                          icon: Icons.local_fire_department_rounded,
-                          color: AppColors.warning,
-                        ),
-                      ),
+                      Expanded(child: StatCard(value: '${progress?.currentStreak ?? 0}🔥', label: 'Day Streak', icon: Icons.local_fire_department_rounded, color: AppColors.warning)),
                       const SizedBox(width: 12),
-                      Expanded(
-                        child: StatCard(
-                          value: '${progress?.quizzesTaken ?? 0}',
-                          label: 'Quizzes Done',
-                          icon: Icons.quiz_rounded,
-                          color: AppColors.primary,
-                        ),
-                      ),
+                      Expanded(child: StatCard(value: '${progress?.quizzesTaken ?? 0}', label: 'Quizzes', icon: Icons.quiz_rounded, color: AppColors.primary)),
                     ],
                   ),
                 ),
 
                 const SizedBox(height: 24),
 
-                // Categories
+                // ─── Categories ───────────────────────────────────
                 FadeInUp(
                   delay: const Duration(milliseconds: 250),
                   child: const SectionHeader(title: 'Browse Categories'),
@@ -137,7 +116,7 @@ class DashboardScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-                // Recent favorites
+                // ─── Favorites ────────────────────────────────────
                 if (provider.favoriteWords.isNotEmpty) ...[
                   FadeInUp(
                     delay: const Duration(milliseconds: 350),
@@ -200,6 +179,8 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
+// ─── Sub-widgets ──────────────────────────────────────────────────────────────
+
 class _LanguageBanner extends StatelessWidget {
   final AppProvider provider;
   const _LanguageBanner({required this.provider});
@@ -207,9 +188,7 @@ class _LanguageBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = provider.selectedLanguage!;
-    final progress = provider.overallProgress;
-    final index = provider.words.length % 6;
-    final colors = AppColors.languageGradients[index];
+    final colors = AppColors.languageGradients[provider.words.length % 6];
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -232,17 +211,14 @@ class _LanguageBanner extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
-                    value: progress,
+                    value: provider.overallProgress,
                     backgroundColor: Colors.white.withOpacity(0.3),
                     valueColor: const AlwaysStoppedAnimation(Colors.white),
                     minHeight: 6,
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  '${provider.learnedWords.length} / ${provider.words.length} words',
-                  style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
-                ),
+                Text('${provider.learnedWords.length}/${provider.words.length} words', style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12)),
               ],
             ),
           ),
@@ -273,9 +249,7 @@ class _DailyLessonCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: lesson.isCompleted ? AppColors.successLight : AppColors.primaryLight,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: lesson.isCompleted ? AppColors.success.withOpacity(0.3) : AppColors.primary.withOpacity(0.2),
-          ),
+          border: Border.all(color: lesson.isCompleted ? AppColors.success.withOpacity(0.3) : AppColors.primary.withOpacity(0.2)),
         ),
         child: Row(
           children: [
@@ -285,11 +259,7 @@ class _DailyLessonCard extends StatelessWidget {
                 color: lesson.isCompleted ? AppColors.success : AppColors.primary,
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(
-                lesson.isCompleted ? Icons.check_rounded : Icons.wb_sunny_rounded,
-                color: Colors.white,
-                size: 26,
-              ),
+              child: Icon(lesson.isCompleted ? Icons.check_rounded : Icons.wb_sunny_rounded, color: Colors.white, size: 26),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -298,11 +268,7 @@ class _DailyLessonCard extends StatelessWidget {
                 children: [
                   Text(
                     lesson.isCompleted ? 'Daily Lesson Complete!' : 'Daily Lesson',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      color: lesson.isCompleted ? AppColors.success : AppColors.primary,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: lesson.isCompleted ? AppColors.success : AppColors.primary),
                   ),
                   Text(
                     lesson.isCompleted ? 'Great job today! Come back tomorrow.' : '${lesson.words.length} words · +${lesson.xpReward} XP',
@@ -311,8 +277,7 @@ class _DailyLessonCard extends StatelessWidget {
                 ],
               ),
             ),
-            if (!lesson.isCompleted)
-              const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.primary),
+            if (!lesson.isCompleted) const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.primary),
           ],
         ),
       ),
@@ -324,7 +289,7 @@ class _CategoryGrid extends StatelessWidget {
   final AppProvider provider;
   const _CategoryGrid({required this.provider});
 
-  static const _categoryIcons = {
+  static const _catData = {
     'Vocabulary': ('📖', AppColors.primary),
     'Grammar': ('✏️', Color(0xFFFF6584)),
     'Phrases': ('💬', Color(0xFF43C59E)),
@@ -342,15 +307,12 @@ class _CategoryGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 0.85,
+        crossAxisCount: 4, mainAxisSpacing: 12, crossAxisSpacing: 12, childAspectRatio: 0.85,
       ),
       itemCount: cats.length,
       itemBuilder: (ctx, i) {
         final cat = cats[i];
-        final icon = _categoryIcons[cat] ?? ('📚', AppColors.primary);
+        final icon = _catData[cat] ?? ('📚', AppColors.primary);
         return GestureDetector(
           onTap: () {
             provider.setCategory(cat);
@@ -359,22 +321,12 @@ class _CategoryGrid extends StatelessWidget {
           child: Column(
             children: [
               Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: icon.$2.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                width: 56, height: 56,
+                decoration: BoxDecoration(color: icon.$2.withOpacity(0.12), borderRadius: BorderRadius.circular(16)),
                 child: Center(child: Text(icon.$1, style: const TextStyle(fontSize: 26))),
               ),
               const SizedBox(height: 6),
-              Text(
-                cat,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 11, color: AppColors.dark, fontWeight: FontWeight.w500),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              Text(cat, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, color: AppColors.dark, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis),
             ],
           ),
         );

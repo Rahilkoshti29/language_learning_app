@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:language_learning_app/app_theme.dart';
 import 'package:language_learning_app/login_screen.dart';
+import 'package:language_learning_app/progress_screen.dart';
+import 'package:language_learning_app/settings_screen.dart';
 import 'package:provider/provider.dart';
-
+import 'achievements_screen.dart';
 import 'app_provider.dart';
+import 'daily_lesson_screen.dart';
+import 'favorites_screen.dart';
 import 'home_screen.dart';
 import 'language_select_screen.dart';
 import 'onboarding_screen.dart';

@@ -1,5 +1,6 @@
 // lib/screens/home/home_screen.dart
 import 'package:flutter/material.dart';
+import 'package:language_learning_app/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:language_learning_app/app_colors.dart';
 import 'package:language_learning_app/app_provider.dart';
@@ -7,7 +8,7 @@ import 'package:language_learning_app/dashboard_screen.dart';
 import 'package:language_learning_app/vocabulary_screen.dart';
 import 'package:language_learning_app/flashcard_home_screen.dart';
 import 'package:language_learning_app/quiz_home_screen.dart';
-//import 'package:language_learning_app/profile_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     VocabularyScreen(),
     FlashcardHomeScreen(),
     QuizHomeScreen(),
-    //ProfileScreen(),
+    ProfileScreen(),
   ];
 
   @override
